@@ -104,6 +104,8 @@ Annuler une Réservation | `/terrains/{id-terrain}/reservations/{id-reservation}
 ## Modèle Conceptuel des Données (MCD)
 
 [Lien vers le MCD](#lien-mcd)
+![Modèle Conceptuel des Données (MCD)](mcd.png)
+
 
 ## Remarques
 
