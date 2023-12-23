@@ -12,7 +12,6 @@
       - [Créneaux](#créneaux)
       - [Adhérents](#adhérents)
       - [Réservations](#réservations)
-      - [Administrateurs](#administrateurs)
     - [Dictionnaire des Données](#dictionnaire-des-données-1)
     - [Tableau Récapitulatif des Ressources](#tableau-récapitulatif-des-ressources)
   - [Modèle Conceptuel des Données (MCD)](#modèle-conceptuel-des-données-mcd)
@@ -61,13 +60,6 @@ Assurez-vous d'avoir [Node.js](https://nodejs.org/) installé sur votre machine.
 - **Paramètres d'URL/Variations :** N/A
 - **Commentaires :** Liste des réservations, ajout et suppression
 
-#### Administrateurs
-
-- **Ressource :** `/administrateurs`
-- **URL :** `/administrateurs`
-- **Méthodes HTTP :** GET, POST
-- **Paramètres d'URL/Variations :** N/A
-- **Commentaires :** Liste des administrateurs, ajout d'un administrateur
 
 ### Dictionnaire des Données
 
@@ -77,33 +69,60 @@ Assurez-vous d'avoir [Node.js](https://nodejs.org/) installé sur votre machine.
 | Créneaux           | creneau_id      | AN   | Oui           |        | Identifiant unique du créneau |
 | Adhérents          | adherent_id     | AN   | Oui           |        | Identifiant unique de l'adhérent |
 | Réservations       | reservation_id  | AN   | Oui           |        | Identifiant unique de la réservation |
-| Administrateurs    | admin_id        | AN   | Oui           |        | Identifiant unique de l'administrateur |
 | Date et Heure      | datetime        | D    | Oui           |        | Date et heure de la réservation |
-| Statut Réservation | status          | A    | Oui           |        | to_confirm, confirmed, canceled |
+| Etat de la réservation | status          | A    | Oui           |        | Ne peut prendre que 3 valeurs : to_confirm, confirmed, canceled  |
+| Statut Réservation attente | to_confirm      | A    | Oui           |        | Valeur possible de Etat de la reservation, une reservation confirmée peut être annulé ou confirmée |
+| Statut Réservation confirmée | confirmed          | A    | Oui           |        | Valeur possible de Etat de la réservation. Ne s'applique sur sur to_confirm. Etat lock |
+| Statut Réservation annulée| canceled          | A    | Oui           |        | ne s'applique que sur un éat to_confirm, ce statut ne peut plus changer aprés |
 
+| ------------------ | --------------- | ---- | ------------- | ------ | ---------------------------------------------- |
+| Ressource          | Code            | Type | Obligatoire ? | Taille | Commentaires                                   |
+| ------------------ | --------------- | ---- | ------------- | ------ | ---------------------------------------------- |
+| Terrains           | id_terrain      | N    | Oui           |        | Identifiant unique du terrain                  |
+| Nom                | nom             | A    | Oui           | 1      | A, B, C, D                                     |
+| Lieu               | lieu            | A    | Oui           | 100    | Lieu du terrain                                |
+| Disponibilité      | disponible      | B    | Oui           |        | true, false                                    |
+| ------------------ | --------------- | ---- | ------------- | ------ | ---------------------------------------------- |
+| Créneaux           | id_creneau      | N    | Oui           |        | Identifiant unique du créneau                  |
+| Date de début      | debut           | D    | Oui           |        | Date de début(ex: 2023-12-25 20:00:00)         |
+| Date de fin        | fin             | D    | Oui           |        | Date de fin(ex: 2023-12-25 20:45:00)           |
+| Jour               | jour            | A    | Oui           |        | lundi, mardi, mercredi, jeudi, vendredi, samedi|
+| ------------------ | --------------- | ---- | ------------- | ------ | ---------------------------------------------- |
+| Adhérents          | id_adherent     | N    | Oui           |        | Identifiant unique de l'adhérent               |
+| Pseudo             | pseudo          | A    | Oui           | 50     | Pseudo unique par adhérent                     |
+| Role               | administrateur  | B    | Oui           |        | true, false                                    |
+| ------------------ | --------------- | ---- | ------------- | ------ | ---------------------------------------------- |
+| Réservations       | id_reservation  | N    | Oui           |        | Identifiant unique de la réservation           |
+| Numéro             | numero          | N    | Oui           |        | Numéro de réservation unique pour l'adhérent   |
+| Date et Heure      | date            | D    | Oui           |        | Date et heure de la réservation                |
+| Statut Réservation | statut          | A    | Oui           |        | to_confirm, confirmed, canceled                |
+| ------------------ | --------------- | ---- | ------------- | ------ | ---------------------------------------------- |
 
 ### Tableau Récapitulatif des Ressources
 
 | Ressource         | URL              | Méthodes HTTP       | Paramètres d'URL/Variations | Commentaires                        |
 |-------------------|------------------|---------------------|-----------------------------|------------------------------------|
-| Terrains          | `/terrains`      | GET, POST           | N/A                         | Liste des terrains, ajout d'un terrain |
+| Terrains          | `/terrains`      | GET, POST           | `/terrains/{id-terrain}`| Liste des terrains, ajout d'un terrain |
 | Créneaux          | `/creneaux`      | GET, POST, DELETE   | N/A                         | Liste des créneaux, ajout et suppression |
-| Adhérents         | `/adherents`     | GET, POST           | N/A                         | Liste des adhérents, ajout d'un adhérent |
+| Adhérents         | `/adh`     | GET, POST           | N/A                         | Liste des adhérents, ajout d'un adhérent |
 | Réservations      | `/reservations`  | GET, POST, DELETE   | N/A                         | Liste des réservations, ajout et suppression |
-| Administrateurs   | `/administrateurs` | GET, POST         | N/A                         | Liste des administrateurs, ajout d'un administrateur |
+
 
 Nom de la ressource | URL | Méthodes HTTP | Paramètres d’URL/Variations | Commentaires
 --- | --- | --- | --- | ---
 Liste des Terrains | `/terrains` | GET | N/A | Liste des terrains disponibles
 Détails d'un Terrain | `/terrains/{id-terrain}` | GET | N/A | Informations détaillées sur un terrain spécifique
 Réserver un Terrain | `/terrains/{id-terrain}/reservations` | POST | N/A | Effectuer une réservation pour un terrain spécifique
-Liste des Réservations d'un Terrain | `/terrains/{id-terrain}/reservations` | GET | N/A | Liste des réservations pour un terrain spécifique
-Annuler une Réservation | `/terrains/{id-terrain}/reservations/{id-reservation}` | DELETE | N/A | Annuler une réservation pour un terrain spécifique
+
+Liste des adhérents| `/adh` | GET | N/A | Liste des Adhérents
+Liste des Réservations d'un adhérent| `/terrains/{id-terrain}/reservations/{id-reservation}/adh` | GET | N/A | Liste des réservations pour un terrain spécifique
+Annuler une Réservation d'un adhérent  | `/terrains/{id-terrain}/reservations/{id-reservation}` | DELETE | N/A | Annuler une réservation pour un terrain spécifique
+Détails d'un Adhérent 
 
 
 ## Modèle Conceptuel des Données (MCD)
 
-[Lien vers le MCD](#lien-mcd)
+
 ![Modèle Conceptuel des Données (MCD)](mcd.png)
 
 
