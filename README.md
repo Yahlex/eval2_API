@@ -12,6 +12,14 @@
       - [Créneaux](#créneaux)
       - [Adhérents](#adhérents)
       - [Réservations](#réservations)
+    - [Afficher tous les terrains disponibles](#afficher-tous-les-terrains-disponibles)
+    - [Afficher les détails d'un terrain particulier](#afficher-les-détails-dun-terrain-particulier)
+    - [Afficher les créneaux disponibles pour un terrain donné](#afficher-les-créneaux-disponibles-pour-un-terrain-donné)
+    - [Réserver un créneau sur un terrain](#réserver-un-créneau-sur-un-terrain)
+    - [Afficher les réservations d'un adhérent](#afficher-les-réservations-dun-adhérent)
+    - [Annuler une réservation](#annuler-une-réservation)
+    - [Afficher les détails d'un adhérent](#afficher-les-détails-dun-adhérent)
+    - [Effectuer une réservation sur un terrain spécifique](#effectuer-une-réservation-sur-un-terrain-spécifique)
     - [Dictionnaire des Données](#dictionnaire-des-données-1)
     - [Tableau Récapitulatif des Ressources](#tableau-récapitulatif-des-ressources)
   - [Modèle Conceptuel des Données (MCD)](#modèle-conceptuel-des-données-mcd)
@@ -60,6 +68,53 @@ Assurez-vous d'avoir [Node.js](https://nodejs.org/) installé sur votre machine.
 - **Paramètres d'URL/Variations :** N/A
 - **Commentaires :** Liste des réservations, ajout et suppression
 
+### Afficher tous les terrains disponibles
+
+- **Type de requête :** GET
+- **Endpoint :** `/terrains`
+- **Description :** Renvoie la liste de tous les terrains disponibles.
+
+### Afficher les détails d'un terrain particulier
+
+- **Type de requête :** GET
+- **Endpoint :** `/terrains/:id`
+- **Description :** Renvoie les détails d'un terrain spécifique en fonction de son identifiant.
+
+### Afficher les créneaux disponibles pour un terrain donné
+
+- **Type de requête :** GET
+- **Endpoint :** `/terrains/:id/creneaux`
+- **Description :** Renvoie les créneaux disponibles pour la réservation sur un terrain spécifique.
+
+### Réserver un créneau sur un terrain
+
+- **Type de requête :** POST
+- **Endpoint :** `/terrains/:id/creneaux/reserver`
+- **Description :** Permet à un adhérent de réserver un créneau sur un terrain spécifique.
+
+### Afficher les réservations d'un adhérent
+
+- **Type de requête :** GET
+- **Endpoint :** `/adherents/:id/reservations`
+- **Description :** Renvoie les réservations effectuées par un adhérent en fonction de son identifiant.
+
+### Annuler une réservation
+
+- **Type de requête :** DELETE
+- **Endpoint :** `/reservations/:id`
+- **Description :** Annule une réservation en fonction de son identifiant.
+
+### Afficher les détails d'un adhérent
+
+- **Type de requête :** GET
+- **Endpoint :** `/adherents/:id`
+- **Description :** Renvoie les détails d'un adhérent en fonction de son identifiant.
+
+### Effectuer une réservation sur un terrain spécifique
+
+- **Type de requête :** POST
+- **Endpoint :** `/terrains/:id/reserver`
+- **Description :** Permet à un adhérent de réserver un créneau sur un terrain spécifique.
 
 ### Dictionnaire des Données
 
