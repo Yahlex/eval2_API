@@ -21,7 +21,7 @@ router.get('/terrains', async function (req, res, next) {
 
     try {
         // Exécute la requête SQL pour récupérer la liste des terrains
-        const [rows, fields] = await connection.execute('SELECT * FROM Terrain');
+        const [rows, fields] = await connection.query('SELECT * FROM Terrain');
         
         // Envoie la réponse avec les données des terrains
         res.json(rows);
@@ -33,6 +33,31 @@ router.get('/terrains', async function (req, res, next) {
 
     } finally {
         // Ferme la connexion à la base de données
+        await connection.end();
+    }
+});
+
+/* GET détail d'un terrain */
+
+router.get('/terrains/:id', async function (req, res, next) {
+    const connection = await mysql.createConnection(dsn);
+
+    try {
+        const terrainId = req.params.id;
+        const [rows, fields] = await connection.execute('SELECT * FROM Terrain WHERE id = ?', [terrainId]);
+
+        if (rows.length === 0) {
+            res.status(404).json({ error: 'Terrain not found' });
+            return;
+        }
+
+        res.json(rows[0]);
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+
+    } finally {
         await connection.end();
     }
 });

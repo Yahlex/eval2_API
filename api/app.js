@@ -7,6 +7,8 @@ const swaggerUi = require('swagger-ui-express')
 const swaggerFile = require('./swagger_output.json')
 var indexRouter = require('./routes/index');
 var terrainRouter = require('./routes/terrains'); // Ajout de la ligne pour le routeur des terrains
+// const creneauxRouter = require('./routes/creneaux');
+// const reservationsRouter = require('./routes/reservations');
 
 
 var app = express();
@@ -47,6 +49,8 @@ app.use(express.static(path.join(__dirname, 'public')));
  */
 app.use('/', indexRouter);
 app.use('/', terrainRouter); // Utilisation du routeur des terrains pour les URLs commencant par /terrain
+// app.use('/creneaux',creneauxRouter);
+// app.use('/reservation',reservationsRouter);
 
 
 /**
