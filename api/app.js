@@ -6,6 +6,7 @@ var logger = require('morgan');
 const swaggerUi = require('swagger-ui-express')
 const swaggerFile = require('./swagger_output.json')
 var indexRouter = require('./routes/index');
+var terrainRouter = require('./routes/terrains'); // Ajout de la ligne pour le routeur des terrains
 
 
 var app = express();
@@ -45,6 +46,7 @@ app.use(express.static(path.join(__dirname, 'public')));
  * Enregistrement des routes
  */
 app.use('/', indexRouter);
+app.use('/', terrainRouter); // Utilisation du routeur des terrains pour les URLs commencant par /terrain
 
 
 /**
