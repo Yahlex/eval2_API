@@ -1,30 +1,35 @@
 var express = require('express');
 var router = express.Router();
-var db = require('../db');
+
+
+//Module mysql2 avec l'API des promesses
+const mysql = require('mysql');
+
+//On utilise l'utilisateur 'user' qui a des droits restreints (DQL, DML)
+//Remarque : il faudrait déplacer le DSN en dehors du code dans un fichier d'environnement (laissé en exercice)
+const dsn = mysql.createConnection ({
+    host: 'localhost',
+    database: 'db_api_mds',
+    user: 'root',
+    password: 'root',
+});
+
 
 /* GET home page. */
 router.get('/', async function (req, res, next) {
 
   // #swagger.summary = "Page d'accueil"
+console.log('hello world');
+  dsn.connect()
+  dsn.query('SELECT * FROM Terrain', (err, rows, fields) => {
+    if (err) throw err
+    ans = rows
+    console.log('The solution is: ', ans)
+    res.send(ans)
+  })
 
-  const conn = await db.mysql.createConnection(db.dsn);
 
-  try {
-    
-    const [rows] = await conn.execute('SELECT * FROM User');
-
-    const users = rows.map(element => {
-      return {
-        firstName: element.first_name
-      }
-    });
-    res.render('index', { title: 'RESTful web api', 'users': users });
-
-  } catch (error) {
-    console.error('Error connecting: ' + error.stack);
-    res.status(500).json({ "msg": "Nous rencontrons des difficultés, merci de réessayer plus tard." });
-
-  }
+  dsn.end()
 });
 
 module.exports = router;
