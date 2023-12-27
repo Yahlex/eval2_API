@@ -9,21 +9,20 @@ const dsn = {
     password: 'root',
 };
 
-/* GET liste des réservations d'un adhérent. */
-router.get('/adherents/:id/reservations', async function (req, res, next) {
+/* GET liste des adhérents. */
+router.get('/adherents', async function (req, res, next) {
     const pool = mysql.createPool(dsn);
 
     try {
         const connection = await pool.getConnection();
-        const adherentId = req.params.id;
 
-        // Exécute la requête SQL pour récupérer les réservations de l'adhérent spécifié
-        const [rows, fields] = await connection.query('SELECT * FROM Reservation WHERE id_adherent = ?', [adherentId]);
+        // Exécute la requête SQL pour récupérer la liste des adhérents
+        const [rows, fields] = await connection.query('SELECT * FROM Adherent');
 
         // Libération de la connexion
         connection.release();
 
-        // Envoie la réponse avec les données des réservations
+        // Envoie la réponse avec les données des adhérents
         res.json(rows);
 
     } catch (error) {
@@ -37,27 +36,27 @@ router.get('/adherents/:id/reservations', async function (req, res, next) {
     }
 });
 
-/* DELETE annuler une réservation */
-router.delete('/reservations/:id', async function (req, res, next) {
+/* GET détail d'un adhérent */
+router.get('/adherents/:id', async function (req, res, next) {
     const pool = mysql.createPool(dsn);
 
     try {
         const connection = await pool.getConnection();
-        const reservationId = req.params.id;
+        const adherentId = req.params.id;
 
-        // Exécute la requête SQL pour annuler la réservation spécifiée
-        const [result] = await connection.query('DELETE FROM Reservation WHERE id = ?', [reservationId]);
+        // Exécute la requête SQL pour récupérer les détails de l'adhérent spécifié
+        const [rows, fields] = await connection.query('SELECT * FROM Adherent WHERE id = ?', [adherentId]);
 
         // Libération de la connexion
         connection.release();
 
-        if (result.affectedRows === 0) {
-            res.status(404).json({ error: 'Reservation not found' });
+        if (rows.length === 0) {
+            res.status(404).json({ error: 'Adherent not found' });
             return;
         }
 
-        // Envoie la réponse avec le statut de suppression
-        res.json({ message: 'Reservation canceled successfully' });
+        // Envoie la réponse avec les données de l'adhérent
+        res.json(rows[0]);
 
     } catch (error) {
         // Gère les erreurs

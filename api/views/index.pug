@@ -2,8 +2,7 @@ extends layout
 
 block content
   h1= title
-  p Welcome to the #{title}
-  h2 Liste des utilisateur·ices de l'application
   ul
-    each user in users
-      li= user.firstName
+    each terrain in terrains
+      li
+        a(href=`/terrains/${terrain.id}/creneaux`) Créneaux disponibles pour #{terrain.nom}

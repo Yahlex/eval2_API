@@ -7,36 +7,38 @@ const mysql = require('mysql2/promise');
 // On utilise l'utilisateur 'user' qui a des droits restreints (DQL, DML)
 // Remarque : il faudrait déplacer le DSN en dehors du code dans un fichier d'environnement (laissé en exercice)
 const dsn = {
-  host: 'localhost',
-  database: 'db_api_mds',
-  user: 'root',
-  password: 'root',
+    host: 'localhost',
+    database: 'db_api_mds',
+    user: 'root',
+    password: 'root',
 };
 
-/* GET home page. */
+// Création d'une connexion pool pour gérer les connexions de manière efficace
+const pool = mysql.createPool(dsn);
+
+var express = require('express');
+var router = express.Router();
+
+
+/* GET home page with links to terrains. */
 router.get('/', async function (req, res, next) {
+  const connection = await pool.getConnection();
+
   try {
-    // #swagger.summary = "Page d'accueil"
-    console.log('hello world');
+      // Récupère la liste des terrains
+      const [rows, fields] = await connection.query('SELECT * FROM Terrain');
 
-    // Création d'une connexion pool pour gérer les connexions de manière efficace
-    const pool = mysql.createPool(dsn);
+      // Envoie la réponse avec les liens vers les créneaux disponibles
+      res.render('index', { title: 'Accueil', terrains: rows });
 
-    // Obtention d'une connexion à partir du pool
-    const connection = await pool.getConnection();
-
-    // Exécution de la requête SQL
-    const [rows, fields] = await connection.query('SELECT * FROM Terrain');
-
-    // Libération de la connexion
-    connection.release();
-
-    console.log('The solution is: ', rows);
-    res.send(rows);
   } catch (error) {
-    console.error('Error:', error.message);
-    res.status(500).send('Internal Server Error');
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+
+  } finally {
+      connection.release();
   }
 });
-
 module.exports = router;
+
+
