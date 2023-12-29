@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const hal = require('../hal');
 const mysql = require('mysql2/promise');
+const { checkTokenMiddleware } = require('./authentification');
 
 const dsn = {
     host: 'localhost',
@@ -13,7 +14,7 @@ const dsn = {
 const pool = mysql.createPool(dsn);
 
 /* POST - Ajouter une réservation */
-router.post('/creneaux/:id/reservation', async function (req, res, next) {
+router.post('/creneaux/:id/reservation', checkTokenMiddleware, async function (req, res, next) {
     const connection = await pool.getConnection();
 
     try {
@@ -64,7 +65,7 @@ router.post('/creneaux/:id/reservation', async function (req, res, next) {
 });
 
 /* DELETE - Supprimer une réservation */
-router.delete('/reservation/:id/delete', async function (req, res, next) {
+router.delete('/reservation/:id/delete',checkTokenMiddleware, async function (req, res, next) {
     const connection = await pool.getConnection();
 
     try {
@@ -117,7 +118,7 @@ router.get('/reservation', async function (req, res, next) {
         // construction d'un objet HAL pour la réponse
         const resourceObject = {
             "_links": [{
-                "self": hal.halLinkObject('/reservations', 'string'),
+                "self": hal.halLinkObject('/reservation', 'string'),
             }],
             "reservations": rows,
         };

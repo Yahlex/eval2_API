@@ -84,6 +84,7 @@ router.post('/login', async (req, res) => {
                     "terrains": hal.halLinkObject('/terrains'),
                     "creneaux": hal.halLinkObject('/creneaux'),
                     "reservations": hal.halLinkObject('/creneaux/:id/reservation'),
+                    "adherents": hal.halLinkObject('/adherents'),
                 },
                 "access_token": token
             });
@@ -95,5 +96,112 @@ router.post('/login', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
+
+// Route pour récupérer la liste des adhérents
+router.get('/adherents', checkTokenMiddleware, async (req, res) => {
+    try {
+        const connection = await pool.getConnection();
+
+        try {
+            // Récupérer la liste des adhérents
+            const [rows] = await connection.query('SELECT * FROM Adherent');
+
+            const adherentsHal = rows.map(adherent => {
+                return {
+                    ...adherent,
+                    _links: {
+                        self: hal.halLinkObject(`/adherents/${adherent.id}`),
+                    }
+                };
+            });
+
+            res.status(200).json({ adherents: adherentsHal });
+
+        } finally {
+            connection.release();
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// Route pour récupérer les détails d'un adhérent
+router.get('/adherents/:id', checkTokenMiddleware, async (req, res) => {
+    const adherentId = req.params.id;
+
+    try {
+        const connection = await pool.getConnection();
+
+        try {
+            // Récupérer les détails de l'adhérent
+            const [rows] = await connection.query('SELECT * FROM Adherent WHERE id = ?', [adherentId]);
+
+            if (rows.length === 0) {
+                return res.status(404).json({ error: 'Adhérent non trouvé' });
+            }
+
+            const adherentHal = {
+                ...rows[0],
+                _links: {
+                    self: hal.halLinkObject(`/adherents/${adherentId}`),
+                    reservations: hal.halLinkObject(`/adherents/${adherentId}/reservations`),
+                }
+            };
+
+            res.status(200).json({ adherent: adherentHal });
+
+        } finally {
+            connection.release();
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// ...
+
+// Route pour récupérer les réservations d'un adhérent
+router.get('/adherents/:id/reservation', checkTokenMiddleware, async (req, res) => {
+    const adherentId = req.params.id;
+
+    try {
+        const connection = await pool.getConnection();
+
+        try {
+            // Récupérer les réservations de l'adhérent
+            const [rows] = await connection.query('SELECT * FROM Reservation WHERE id_adherent = ?', [adherentId]);
+
+            const reservationsHal = rows.map(reservation => ({
+                ...reservation,
+                _links: {
+                    self: hal.halLinkObject(`/adherents/${adherentId}/reservation/${reservation.id}`),
+                }
+            }));
+
+            const responseHal = {
+                adherent_id: adherentId,
+                reservations: reservationsHal,
+                _links: {
+                    self: hal.halLinkObject(`/adherents/${adherentId}/reservation`),
+                    adherent: hal.halLinkObject(`/adherents/${adherentId}`),
+                }
+            };
+
+            res.status(200).json(responseHal);
+
+        } finally {
+            connection.release();
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// ...
+
 
 module.exports = { router, checkTokenMiddleware };
