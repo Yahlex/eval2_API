@@ -3,6 +3,9 @@ extends layout
 block content
   h1= title
   ul
-    each terrain in terrains
-      li
-        a(href=`/terrains/${terrain.id}/creneaux`) Créneaux disponibles pour #{terrain.nom}
+    li
+      a(href='/terrains') Liste des Terrains
+    li
+      a(href='/login') Page de Connexion
+    li
+      a(href='/creneaux') Créneaux Disponibles

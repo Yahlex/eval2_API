@@ -5,10 +5,17 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const swaggerUi = require('swagger-ui-express')
 const swaggerFile = require('./swagger_output.json')
+var hal = require('./hal')
+
+/**
+ * Import des modules de routing
+ */
+
 var indexRouter = require('./routes/index');
 var terrainRouter = require('./routes/terrains'); // Ajout de la ligne pour le routeur des terrains
-const adherentsRouter = require('./routes/adherents');
-const reservationsRouter = require('./routes/reservations');
+var authentification = require('./routes/authentification');
+var reservationsRouter = require('./routes/reservations');
+var creneauxRouter = require('./routes/creneaux');
 
 
 var app = express();
@@ -37,6 +44,7 @@ server.listen(port);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
+app.set('query parser', 'simple')
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -48,9 +56,10 @@ app.use(express.static(path.join(__dirname, 'public')));
  * Enregistrement des routes
  */
 app.use('/', indexRouter);
-app.use('/', terrainRouter); // Utilisation du routeur des terrains pour les URLs commencant par /terrain
-app.use('/', adherentsRouter);
+app.use('/', terrainRouter); 
 app.use('/', reservationsRouter);
+app.use('/', authentification.router);
+app.use('/', creneauxRouter);
 
 
 /**

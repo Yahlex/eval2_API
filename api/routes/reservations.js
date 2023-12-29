@@ -1,5 +1,6 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const hal = require('../hal');
 const mysql = require('mysql2/promise');
 
 const dsn = {
@@ -9,65 +10,129 @@ const dsn = {
     password: 'root',
 };
 
-/* GET liste des réservations d'un adhérent. */
-router.get('/adherents/:id/reservations', async function (req, res, next) {
-    const pool = mysql.createPool(dsn);
+const pool = mysql.createPool(dsn);
+
+/* POST - Ajouter une réservation */
+router.post('/creneaux/:id/reservation', async function (req, res, next) {
+    const connection = await pool.getConnection();
 
     try {
-        const connection = await pool.getConnection();
-        const adherentId = req.params.id;
+        const creneauId = req.params.id;
+        const pseudo = req.body.pseudo;
 
-        // Exécute la requête SQL pour récupérer les réservations de l'adhérent spécifié
-        const [rows, fields] = await connection.query('SELECT * FROM Reservation WHERE id_adherent = ?', [adherentId]);
+        // Vérifiez si le créneau est actif
+        const [creneauRows] = await connection.execute('SELECT is_active FROM Creneaux WHERE id = ?', [creneauId]);
 
-        // Libération de la connexion
-        connection.release();
-
-        // Envoie la réponse avec les données des réservations
-        res.json(rows);
-
-    } catch (error) {
-        // Gère les erreurs
-        console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
-
-    } finally {
-        // Libération de la connexion dans le pool
-        pool.end();
-    }
-});
-
-/* DELETE annuler une réservation */
-router.delete('/reservations/:id', async function (req, res, next) {
-    const pool = mysql.createPool(dsn);
-
-    try {
-        const connection = await pool.getConnection();
-        const reservationId = req.params.id;
-
-        // Exécute la requête SQL pour annuler la réservation spécifiée
-        const [result] = await connection.query('DELETE FROM Reservation WHERE id = ?', [reservationId]);
-
-        // Libération de la connexion
-        connection.release();
-
-        if (result.affectedRows === 0) {
-            res.status(404).json({ error: 'Reservation not found' });
-            return;
+        if (creneauRows.length === 0 || creneauRows[0].is_active !== 1) {
+            return res.status(400).json({ error: 'Le créneau n\'est pas disponible' });
         }
 
-        // Envoie la réponse avec le statut de suppression
-        res.json({ message: 'Reservation canceled successfully' });
+        // Récupérer l'ID de l'adhérent en utilisant le pseudo
+        const [adherentRows] = await connection.execute('SELECT id FROM Adherent WHERE pseudo = ?', [pseudo]);
+
+        if (adherentRows.length === 0) {
+            return res.status(404).json({ error: 'Adhérent non trouvé' });
+        }
+
+        const adherentId = adherentRows[0].id;
+
+        // Insérer la réservation
+        const [result] = await connection.execute('INSERT INTO Reservation (creneaux_id, id_adherent) VALUES (?, ?)', [creneauId, adherentId]);
+
+        if (result.affectedRows === 0) {
+            return res.status(500).json({ error: 'Erreur lors de l\'ajout de la réservation' });
+        }
+
+        // construction d'un objet HAL pour la réponse
+        const resourceObject = {
+            "_links": [{
+                "self": hal.halLinkObject(`/creneaux/${creneauId}/reservation`, 'string'),
+            }],
+            "message": 'Réservation ajoutée avec succès!',
+        };
+
+        // Renvoyer la réponse
+        res.status(201).json(resourceObject);
 
     } catch (error) {
-        // Gère les erreurs
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
 
     } finally {
-        // Libération de la connexion dans le pool
-        pool.end();
+        connection.release();
     }
 });
+
+/* DELETE - Supprimer une réservation */
+router.delete('/reservation/:id/delete', async function (req, res, next) {
+    const connection = await pool.getConnection();
+
+    try {
+        const reservationId = req.params.id;
+        const pseudo = req.body.pseudo;
+        const password = req.body.password;
+
+        // Vérifiez l'authentification de l'adhérent
+        const [authRows] = await connection.execute('SELECT id_adherent FROM Reservation WHERE id = ? AND id_adherent = (SELECT id FROM Adherent WHERE pseudo = ? AND password = ?)', [reservationId, pseudo, password]);
+
+        if (authRows.length === 0) {
+            return res.status(401).json({ error: 'Authentification échouée ou réservation non trouvée' });
+        }
+
+        // Supprimer la réservation
+        const [result] = await connection.execute('DELETE FROM Reservation WHERE id = ?', [reservationId]);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Réservation non trouvée' });
+        }
+
+        // construction d'un objet HAL pour la réponse
+        const resourceObject = {
+            "_links": [{
+                "self": hal.halLinkObject(`/reservation/${reservationId}/delete`, 'string'),
+            }],
+            "message": 'Réservation supprimée avec succès!',
+        };
+
+        // Renvoyer la réponse
+        res.status(200).json(resourceObject);
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+
+    } finally {
+        connection.release();
+    }
+});
+
+/* GET - Liste des réservations */
+router.get('/reservation', async function (req, res, next) {
+    const connection = await pool.getConnection();
+
+    try {
+        // Récupérer la liste des réservations
+        const [rows] = await connection.execute('SELECT * FROM Reservation');
+
+        // construction d'un objet HAL pour la réponse
+        const resourceObject = {
+            "_links": [{
+                "self": hal.halLinkObject('/reservations', 'string'),
+            }],
+            "reservations": rows,
+        };
+
+        // Renvoyer la réponse
+        res.status(200).json(resourceObject);
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+
+    } finally {
+        connection.release();
+    }
+});
+
 
 module.exports = router;

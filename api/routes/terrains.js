@@ -1,11 +1,10 @@
 var express = require('express');
 var router = express.Router();
+const hal = require('../hal'); 
 
-// Module mysql2 avec l'API des promesses
-const mysql = require('mysql2/promise'); // Assurez-vous d'utiliser la version avec la promesse
 
-// On utilise l'utilisateur 'user' qui a des droits restreints (DQL, DML)
-// Remarque : il faudrait déplacer le DSN en dehors du code dans un fichier d'environnement (laissé en exercice)
+const mysql = require('mysql2/promise'); 
+
 const dsn = {
     host: 'localhost',
     database: 'db_api_mds',
@@ -27,7 +26,7 @@ router.get('/terrains', async function (req, res, next) {
         const [rows, fields] = await connection.query('SELECT * FROM Terrain');
         
         // Envoie la réponse avec les données des terrains
-        res.json(rows);
+        res.render('terrains', { title: 'Liste des Terrains', terrains: rows });
 
     } catch (error) {
         // Gère les erreurs
@@ -75,8 +74,19 @@ router.get('/terrains/:id/creneaux', async function (req, res, next) {
         // Récupère les créneaux disponibles pour le terrain spécifié (à adapter selon ta structure de base de données)
         const [rows, fields] = await connection.query('SELECT * FROM Creneaux WHERE terrain_id = ?', [terrainId]);
 
-        // Envoie la réponse avec les créneaux disponibles
-        res.json(rows);
+        // Convertit les données brutes en objets HAL
+        const halCreneaux = rows.map(creneau => hal.mapCreneauToResourceObject(creneau, 'http://localhost:3000'));
+
+        // Crée un objet HAL représentant la collection de créneaux
+        const halResponse = {
+            _links: {
+                self: hal.halLinkObject(`/terrains/${terrainId}/creneaux`)
+            },
+            items: halCreneaux
+        };
+
+        // Envoie la réponse au format HAL
+        res.json(halResponse);
 
     } catch (error) {
         console.error(error);

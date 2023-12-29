@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  h1 Terrains Disponibles
+  ul
+    each terrain in terrains
+      li
+        a(href=`/terrains/${terrain.id}`) #{terrain.nom}
+        | &nbsp;| &nbsp;
+        a(href=`/terrains/${terrain.id}/creneaux`) Créneaux Disponibles

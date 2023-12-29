@@ -1,0 +1,7 @@
+extends layout
+
+block content
+  h1 Réservation pour #{terrain.nom}
+  p Créneau sélectionné : #{creneau.horaire}
+  form(action=`/terrains/${terrain.id}/creneaux/${creneau.id}/reserver`, method='post')
+    button(type='submit') Réserver ce Créneau
