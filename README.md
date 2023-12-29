@@ -9,7 +9,21 @@
   - [Configuration de la Base de Données](#configuration-de-la-base-de-données)
   - [Lancer le Serveur](#lancer-le-serveur)
     - [Tester l'API](#tester-lapi)
-      - [Annuler une réservation](#annuler-une-réservation)
+  - [Conception :](#conception-)
+    - [Dictionnaire des Données](#dictionnaire-des-données)
+    - [Nommer les ressources avec des URI](#nommer-les-ressources-avec-des-uri)
+    - [Implémenter un sous-ensemble de l'interface uniforme (`GET`, `POST`, `DELETE`, `PUT`) pour chaque ressource](#implémenter-un-sous-ensemble-de-linterface-uniforme-get-post-delete-put-pour-chaque-ressource)
+  - [Afficher tous les terrains disponibles](#afficher-tous-les-terrains-disponibles)
+  - [Afficher les détails d'un terrain particulier](#afficher-les-détails-dun-terrain-particulier)
+  - [Afficher les créneaux disponibles pour un terrain donné](#afficher-les-créneaux-disponibles-pour-un-terrain-donné)
+  - [Réserver un créneau sur un terrain](#réserver-un-créneau-sur-un-terrain)
+  - [Afficher les réservations d'un adhérent](#afficher-les-réservations-dun-adhérent)
+  - [Annuler une réservation](#annuler-une-réservation)
+  - [Afficher les détails d'un adhérent](#afficher-les-détails-dun-adhérent)
+  - [Tableau Récapitulatif des Ressources](#tableau-récapitulatif-des-ressources)
+    - [6. Concevoir la ou les représentations à mettre à disposition des clients](#6-concevoir-la-ou-les-représentations-à-mettre-à-disposition-des-clients)
+      - [Faire une réservation](#faire-une-réservation)
+      - [Annuler une réservation](#annuler-une-réservation-1)
     - [S'authentifier](#sauthentifier)
   - [Modèle Conceptuel des Données (MCD)](#modèle-conceptuel-des-données-mcd)
   - [Remarques](#remarques)
@@ -81,6 +95,7 @@ Voici un exemple de requête POST pour faire une réservation :
    {
        "pseudo": "votre_pseudo"
    }
+   ```
 
 
 ## Conception :
@@ -104,8 +119,6 @@ Voici un exemple de requête POST pour faire une réservation :
 
 
 ### Nommer les ressources avec des URI 
-
-### 3. Nommer les ressources avec des URI
 
 - *Les liste des terrains* : `/terrains`
 - *Détail d'un terrain* : `/terrains/{id}`
