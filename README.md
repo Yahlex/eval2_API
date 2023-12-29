@@ -170,10 +170,10 @@ Voici un exemple de requête POST pour faire une réservation :
 
 | Ressource                                      | URL                                      | Méthodes HTTP       | Paramètres d'URL/Variations                    | Commentaires                                      |
 |-----------------------------------------------|------------------------------------------|---------------------|-----------------------------------------------|--------------------------------------------------|
-| Terrains                                      | `/terrains`                              | GET, POST           | N/A                                           | Liste des terrains, ajout d'un terrain             |
-| Créneaux                                      | `/creneaux`                              | GET, POST, DELETE   | N/A                                           | Liste des créneaux, ajout et suppression           |
-| Adhérents                                     | `/adherents`                             | GET, POST           | N/A                                           | Liste des adhérents, ajout d'un adhérent          |
-| Réservations                                  | `/reservations`                          | GET, POST, DELETE   | N/A                                           | Liste des réservations, ajout et suppression       |
+| Terrains                                      | `/terrains`                              | GET,            | N/A                                           | Liste des terrains,             |
+| Créneaux                                      | `/creneaux`                              | GET,    | N/A                                           | Liste des créneaux,           |
+| Adhérents                                     | `/adherents`                             | GET,            | N/A                                           | Liste des adhérents,           |
+| Réservations                                  | `/reservations`                          | GET,    | N/A                                           | Liste des réservations,        |
 | Détails d'un terrain                          | `/terrains/:id`                         | GET                 | `:id` - Identifiant du terrain                 | Détails d'un terrain spécifique                    |
 | Créneaux pour un terrain                      | `/terrains/:id/creneaux`                | GET                 | `:id` - Identifiant du terrain                 | Liste des créneaux pour un terrain donné           |
 | Détails d'un adhérent                         | `/adherents/:id`                        | GET                 | `:id` - Identifiant de l'adhérent              | Détails d'un adhérent spécifique                   |
