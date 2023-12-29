@@ -75,6 +75,7 @@ Dans le répertoire du projet, exécutez la commande suivante pour démarrer le 
 
 ```bash
 node app.js
+```
 
 Le serveur démarrera sur [http://localhost:3000](http://localhost:3000).
 
