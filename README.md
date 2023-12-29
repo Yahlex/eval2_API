@@ -9,22 +9,7 @@
   - [Configuration de la Base de Données](#configuration-de-la-base-de-données)
   - [Lancer le Serveur](#lancer-le-serveur)
     - [Tester l'API](#tester-lapi)
-  - [Conception :](#conception-)
-    - [Dictionnaire des Données](#dictionnaire-des-données)
-    - [Nommer les ressources avec des URI](#nommer-les-ressources-avec-des-uri)
-    - [3. Nommer les ressources avec des URI](#3-nommer-les-ressources-avec-des-uri)
-    - [Implémenter un sous-ensemble de l'interface uniforme (`GET`, `POST`, `DELETE`, `PUT`) pour chaque ressource](#implémenter-un-sous-ensemble-de-linterface-uniforme-get-post-delete-put-pour-chaque-ressource)
-  - [Afficher tous les terrains disponibles](#afficher-tous-les-terrains-disponibles)
-  - [Afficher les détails d'un terrain particulier](#afficher-les-détails-dun-terrain-particulier)
-  - [Afficher les créneaux disponibles pour un terrain donné](#afficher-les-créneaux-disponibles-pour-un-terrain-donné)
-  - [Réserver un créneau sur un terrain](#réserver-un-créneau-sur-un-terrain)
-  - [Afficher les réservations d'un adhérent](#afficher-les-réservations-dun-adhérent)
-  - [Annuler une réservation](#annuler-une-réservation)
-  - [Afficher les détails d'un adhérent](#afficher-les-détails-dun-adhérent)
-  - [Tableau Récapitulatif des Ressources](#tableau-récapitulatif-des-ressources)
-    - [6. Concevoir la ou les représentations à mettre à disposition des clients](#6-concevoir-la-ou-les-représentations-à-mettre-à-disposition-des-clients)
-      - [Faire une réservation](#faire-une-réservation)
-      - [Annuler une réservation](#annuler-une-réservation-1)
+      - [Annuler une réservation](#annuler-une-réservation)
     - [S'authentifier](#sauthentifier)
   - [Modèle Conceptuel des Données (MCD)](#modèle-conceptuel-des-données-mcd)
   - [Remarques](#remarques)
@@ -211,7 +196,7 @@ Le client enverra sa représentation par de simples `clef=valeur` dans le corps 
 POST /creneaux/[id-creneau]/reservation HTTP/1.1
 Authorization: Bearer [votre-token]
 Content-Type: application/json
-
+```json
 {
   "pseudo": "votre-pseudo"
 }
@@ -219,7 +204,7 @@ Content-Type: application/json
 HTTP/1.1 201 Created
 Content-Type: application/hal+json
 
-{
+1. {
   "_links": [
     {
       "self": {
@@ -229,6 +214,7 @@ Content-Type: application/hal+json
   ],
   "message": "Réservation ajoutée avec succès!"
 }
+```
 
 
 
@@ -237,7 +223,7 @@ Content-Type: application/hal+json
 DELETE /reservation/[id-reservation]/delete HTTP/1.1
 Authorization: Bearer [votre-token]
 Content-Type: application/json
-
+```json
 {
   "pseudo": "votre-pseudo",
   "password": "votre-mot-de-passe"
@@ -256,12 +242,12 @@ Content-Type: application/hal+json
   ],
   "message": "Réservation supprimée avec succès!"
 }
-
+```
 ### S'authentifier
 
 POST /login HTTP/1.1
 Content-Type: application/json
-
+```json
 {
   "pseudo": "admybad",
   "password": "admybad"
@@ -290,7 +276,7 @@ Content-Type: application/hal+json
   },
   "access_token": "[votre-token]"
 }
-
+```
 
 ## Modèle Conceptuel des Données (MCD)
 
@@ -300,8 +286,29 @@ Content-Type: application/hal+json
 
 ## Remarques
 
-Ajoutez ici vos remarques sur le travail réalisé, les difficultés rencontrées, etc.
+J'ai trouvé que le travail était vraiment compliqué, étant débutant dans le domaine des API. Heureusement, la documentation fournie ainsi que l'exemple de correction m'ont aidé à avancer sur le projet. Malgré cela, je suis un peu déçu car j'ai réalisé seulement une partie du projet en raison d'un manque de temps. L'analyse, la mise en oeuvre et surtout la compréhension ont pris beaucoup de temps.
+
+CHATGPT a été d'une grande aide pour comprendre des concepts clés, en particulier pour la gestion des tokens et la réalisation des méthodes de test de l'API avec Postman.Malheureusement, je n'ai pas réussi à mettre en place Swagger ni Docker. Après avoir passé trop de temps dessus, j'ai décidé d'arrêter.... Ce projet a été ma première expérience dans la réalisation d'un tel projet, et il m'a appris énormément, notamment en ce qui concerne la gestion des routes, les connexions aux bases de données et, mine de rien, les requêtes SQL, car j'ai dû en faire beaucoup pour récupérer les bonnes données dans chaque route.
+
+
+En résumé, j'ai acquis les compétences suivantes :
+
+Initialisation d'un projet avec Node.js et Express en tant que serveur.
+
+Création de routes :
+
+Configuration de la route et des params requis.
+Renvoi de données au format JSON.
+Émission de réponses HAL.
+Gestion de vues, même si cela n'était pas explicitement requis (par exemple, redirection vers une vue d'index pour accéder à différentes pages). Au départ, j'ai utilisé les vues Pug pour mieux comprendre le projet.
+
+Maîtrise des requêtes SQL :
+
+Utilisation de requêtes SQL pour récupérer les données nécessaires dans chaque route ou vérifier des informations de données.
+
+En conclusion, malgré les difficultés, cette expérience a été enrichissante et formatrice.
+
 
 ## Références
 
-Ajoutez ici la liste des références (sites web, cours, livres, articles, billets de blog, etc.) qui vous ont aidé à concevoir et développer votre système.
+Support de cours, camardes de classes (ewen), le projet sur la reservation de billeterie de concerts (corrigé) et ChatGPT en grande partie.
