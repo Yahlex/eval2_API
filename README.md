@@ -6,11 +6,14 @@
   - [Table des matières](#table-des-matières)
   - [Lancer le Projet](#lancer-le-projet)
     - [Installer les Dépendances](#installer-les-dépendances)
+  - [Configuration de la Base de Données](#configuration-de-la-base-de-données)
+  - [Lancer le Serveur](#lancer-le-serveur)
+    - [Tester l'API](#tester-lapi)
   - [Conception :](#conception-)
     - [Dictionnaire des Données](#dictionnaire-des-données)
     - [Nommer les ressources avec des URI](#nommer-les-ressources-avec-des-uri)
-    - [3. **Nommer** les ressources avec des URI](#3-nommer-les-ressources-avec-des-uri)
-    - [**Implémenter** un sous-ensemble de l'interface uniforme (`GET`, `POST`, `DELETE`, `PUT`) pour chaque ressource](#implémenter-un-sous-ensemble-de-linterface-uniforme-get-post-delete-put-pour-chaque-ressource)
+    - [3. Nommer les ressources avec des URI](#3-nommer-les-ressources-avec-des-uri)
+    - [Implémenter un sous-ensemble de l'interface uniforme (`GET`, `POST`, `DELETE`, `PUT`) pour chaque ressource](#implémenter-un-sous-ensemble-de-linterface-uniforme-get-post-delete-put-pour-chaque-ressource)
   - [Afficher tous les terrains disponibles](#afficher-tous-les-terrains-disponibles)
   - [Afficher les détails d'un terrain particulier](#afficher-les-détails-dun-terrain-particulier)
   - [Afficher les créneaux disponibles pour un terrain donné](#afficher-les-créneaux-disponibles-pour-un-terrain-donné)
@@ -18,8 +21,11 @@
   - [Afficher les réservations d'un adhérent](#afficher-les-réservations-dun-adhérent)
   - [Annuler une réservation](#annuler-une-réservation)
   - [Afficher les détails d'un adhérent](#afficher-les-détails-dun-adhérent)
-  - [Effectuer une réservation sur un terrain spécifique](#effectuer-une-réservation-sur-un-terrain-spécifique)
   - [Tableau Récapitulatif des Ressources](#tableau-récapitulatif-des-ressources)
+    - [6. Concevoir la ou les représentations à mettre à disposition des clients](#6-concevoir-la-ou-les-représentations-à-mettre-à-disposition-des-clients)
+      - [Faire une réservation](#faire-une-réservation)
+      - [Annuler une réservation](#annuler-une-réservation-1)
+    - [S'authentifier](#sauthentifier)
   - [Modèle Conceptuel des Données (MCD)](#modèle-conceptuel-des-données-mcd)
   - [Remarques](#remarques)
   - [Références](#références)
@@ -47,7 +53,48 @@ Installez les dépendances nécessaires :
     npm install mysql2
     ```
 
-Cette commande installe les dépendances requises pour le bon fonctionnement du projet.
+4. [express](https://www.npmjs.com/package/express) :
+    ```bash
+    npm install express
+    ```
+
+Ces commandes installe les dépendances requises pour le bon fonctionnement du projet.
+
+## Configuration de la Base de Données
+
+1. Téléchargez et installez [XAMPP](https://www.apachefriends.org/fr/index.html) (pour Windows, macOS, et Linux) ou [MAMP](https://www.mamp.info/) (pour macOS et Windows).
+
+2. Lancez le serveur Apache et MySQL de XAMPP/MAMP.
+
+3. Importez le script SQL fourni dans le projet ([db_api_mds.sql](/init/db_api_mds.sql)) dans votre base de données.
+
+
+## Lancer le Serveur
+
+Dans le répertoire du projet, exécutez la commande suivante pour démarrer le serveur :
+
+```bash
+node app.js
+
+Le serveur démarrera sur [http://localhost:3000](http://localhost:3000).
+
+
+### Tester l'API
+
+Pour tester l'API, vous pouvez utiliser un outil comme [Postman](https://www.postman.com/) pour envoyer des requêtes HTTP à l'API. Assurez-vous d'inclure le token d'accès dans les en-têtes des requêtes nécessitant une authentification.
+
+Voici un exemple de requête POST pour faire une réservation :
+
+1. Endpoint : `http://localhost:3000/creneaux/:id/reservation`
+2. Type de requête : POST
+3. Headers :
+   - Key: Authorization
+   - Value: Bearer [votre_token]
+4. Body (raw JSON) :
+   ```json
+   {
+       "pseudo": "votre_pseudo"
+   }
 
 
 ## Conception :
@@ -72,7 +119,7 @@ Cette commande installe les dépendances requises pour le bon fonctionnement du 
 
 ### Nommer les ressources avec des URI 
 
-### 3. **Nommer** les ressources avec des URI
+### 3. Nommer les ressources avec des URI
 
 - *Les liste des terrains* : `/terrains`
 - *Détail d'un terrain* : `/terrains/{id}`
@@ -87,7 +134,7 @@ Cette commande installe les dépendances requises pour le bon fonctionnement du 
 - *Détails d'un adhérent* : `/adherents/{id}`
 - *afficher les Réservations d'un adhérent* : `/adherents/{id}/reservation`
 
-### **Implémenter** un sous-ensemble de l'interface uniforme (`GET`, `POST`, `DELETE`, `PUT`) pour chaque ressource
+### Implémenter un sous-ensemble de l'interface uniforme (`GET`, `POST`, `DELETE`, `PUT`) pour chaque ressource
 
 
 ## Afficher tous les terrains disponibles
@@ -132,11 +179,6 @@ Cette commande installe les dépendances requises pour le bon fonctionnement du 
 - **Endpoint :** `/adherents/:id`
 - **Description :** Renvoie les détails d'un adhérent en fonction de son identifiant.
 
-## Effectuer une réservation sur un terrain spécifique
-
-- **Type de requête :** POST
-- **Endpoint :** `/terrains/:id/reservation`
-- **Description :** Permet à un adhérent de réserver un créneau sur un terrain spécifique.
 
 ## Tableau Récapitulatif des Ressources
 
@@ -152,6 +194,101 @@ Cette commande installe les dépendances requises pour le bon fonctionnement du 
 | Effectuer une réservation sur un créneaux spécifique | `/creneaux/:id/reservation`        | POST                | `:id` - Identifiant du terrain                 | Permet à un adhérent de réserver un créneau sur un terrain spécifique |
 | Détails d'un créneau                          | `/creneaux/:id`                         | GET                 | `:id` - Identifiant du créneau                | Détails d'un créneau spécifique                    |
 | Liste des réservations d'un adhérent          | `/adherents/:id/reservation`          | GET                 | `:id` - Identifiant de l'adhérent              | Liste des réservations effectuées par un adhérent |
+
+
+### 6. Concevoir la ou les représentations à mettre à disposition des clients
+
+Maintenant, il faut déterminer les représentations que les clients peuvent fabriquer et qui seront comprises par le serveur. Il faut définir la représentation pour :
+
+- Une réservation
+- Une authentification
+
+Le client enverra sa représentation par de simples `clef=valeur` dans le corps de la requête HTTP.
+
+#### Faire une réservation 
+
+POST /creneaux/[id-creneau]/reservation HTTP/1.1
+Authorization: Bearer [votre-token]
+Content-Type: application/json
+
+{
+  "pseudo": "votre-pseudo"
+}
+
+HTTP/1.1 201 Created
+Content-Type: application/hal+json
+
+{
+  "_links": [
+    {
+      "self": {
+        "href": "/creneaux/[id-creneau]/reservation"
+      }
+    }
+  ],
+  "message": "Réservation ajoutée avec succès!"
+}
+
+
+
+#### Annuler une réservation 
+
+DELETE /reservation/[id-reservation]/delete HTTP/1.1
+Authorization: Bearer [votre-token]
+Content-Type: application/json
+
+{
+  "pseudo": "votre-pseudo",
+  "password": "votre-mot-de-passe"
+}
+
+HTTP/1.1 200 OK
+Content-Type: application/hal+json
+
+{
+  "_links": [
+    {
+      "self": {
+        "href": "/reservation/[id-reservation]/delete"
+      }
+    }
+  ],
+  "message": "Réservation supprimée avec succès!"
+}
+
+### S'authentifier
+
+POST /login HTTP/1.1
+Content-Type: application/json
+
+{
+  "pseudo": "admybad",
+  "password": "admybad"
+}
+
+HTTP/1.1 201 Created
+Content-Type: application/hal+json
+
+{
+  "_links": {
+    "self": {
+      "href": "/login"
+    },
+    "terrains": {
+      "href": "/terrains"
+    },
+    "creneaux": {
+      "href": "/creneaux"
+    },
+    "reservations": {
+      "href": "/creneaux/:id/reservation"
+    },
+    "adherents": {
+      "href": "/adherents"
+    }
+  },
+  "access_token": "[votre-token]"
+}
 
 
 ## Modèle Conceptuel des Données (MCD)
