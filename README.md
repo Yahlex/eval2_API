@@ -70,7 +70,7 @@ Ces commandes installe les dépendances requises pour le bon fonctionnement du p
 
 ## Lancer le Serveur
 
-Dans le répertoire du projet, exécutez la commande suivante pour démarrer le serveur :
+Dans le répertoire /api du projet, exécutez la commande suivante pour démarrer le serveur :
 
 ```bash
 node app.js
