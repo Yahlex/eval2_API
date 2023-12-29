@@ -21,7 +21,7 @@
   - [Annuler une réservation](#annuler-une-réservation)
   - [Afficher les détails d'un adhérent](#afficher-les-détails-dun-adhérent)
   - [Tableau Récapitulatif des Ressources](#tableau-récapitulatif-des-ressources)
-    - [6. Concevoir la ou les représentations à mettre à disposition des clients](#6-concevoir-la-ou-les-représentations-à-mettre-à-disposition-des-clients)
+    - [Concevoir la ou les représentations à mettre à disposition des clients](#concevoir-la-ou-les-représentations-à-mettre-à-disposition-des-clients)
       - [Faire une réservation](#faire-une-réservation)
       - [Annuler une réservation](#annuler-une-réservation-1)
     - [S'authentifier](#sauthentifier)
@@ -195,7 +195,7 @@ Voici un exemple de requête POST pour faire une réservation :
 | Liste des réservations d'un adhérent          | `/adherents/:id/reservation`          | GET                 | `:id` - Identifiant de l'adhérent              | Liste des réservations effectuées par un adhérent |
 
 
-### 6. Concevoir la ou les représentations à mettre à disposition des clients
+### Concevoir la ou les représentations à mettre à disposition des clients
 
 Maintenant, il faut déterminer les représentations que les clients peuvent fabriquer et qui seront comprises par le serveur. Il faut définir la représentation pour :
 
